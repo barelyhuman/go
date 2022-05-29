@@ -2,10 +2,16 @@ package env
 
 import "os"
 
-func GetEnvDefault(key string, def string) (result string) {
+// Get the value from the env with a fallback default value
+func Get(key string, defaultValue string) (result string) {
 	result = os.Getenv(key)
 	if len(result) == 0 {
-		result = def
+		result = defaultValue
 	}
 	return
+}
+
+// Set - wrapper around os.Setenv to maintain consistency with the env API
+func Set(key string, value string) error {
+	return os.Setenv(key, value)
 }
