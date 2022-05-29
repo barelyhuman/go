@@ -35,17 +35,38 @@ func TestPickField(t *testing.T) {
 
 	exampleSlice := []pickFieldTestType{{value: "wake up"}, {value: "code"}, {value: "repeat"}}
 
-	pickedSlices := slices.PickField(exampleSlice, func(k pickFieldTestType) string {
-		return k.value
-	})
+	t.Run("with func", func(t *testing.T) {
+		pickedSlices := slices.PickField(exampleSlice,
+			slices.PickWithFunc(
+				func(k pickFieldTestType) string {
+					return k.value
+				},
+			))
 
-	if len(pickedSlices) != len(exampleSlice) {
-		t.Fail()
-	}
-
-	for i, sliceItem := range exampleSlice {
-		if sliceItem.value != pickedSlices[i] {
+		if len(pickedSlices) != len(exampleSlice) {
 			t.Fail()
 		}
-	}
+
+		for i, sliceItem := range exampleSlice {
+			if sliceItem.value != pickedSlices[i] {
+				t.Fail()
+			}
+		}
+	})
+
+	t.Run("with key func", func(t *testing.T) {
+		pickedSlices := slices.PickField(exampleSlice,
+			slices.PickWithKey[pickFieldTestType]("value"),
+		)
+
+		if len(pickedSlices) != len(exampleSlice) {
+			t.Fail()
+		}
+
+		for i, sliceItem := range exampleSlice {
+			if sliceItem.value != pickedSlices[i].String() {
+				t.Fail()
+			}
+		}
+	})
 }
