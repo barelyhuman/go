@@ -15,6 +15,10 @@ var CyanCode = "\033[36m"
 var GrayCode = "\033[37m"
 var WhiteCode = "\033[97m"
 
+type ColorString struct {
+	value *strings.Builder
+}
+
 func init() {
 	if runtime.GOOS == "windows" {
 		ResetCode = ""
@@ -27,73 +31,75 @@ func init() {
 		GrayCode = ""
 		WhiteCode = ""
 	}
+
 }
 
-type ColorString struct {
-	value *strings.Builder
+func (cs *ColorString) initCheck() {
+	if cs.value == nil {
+		cs.value = &strings.Builder{}
+	}
 }
 
 // Write a string to the ColorString instance. This is to add in normal or cloning existing ColorString instances
 func (cs *ColorString) Write(msg string) *ColorString {
+	cs.initCheck()
 	cs.value.WriteString(msg)
+	return cs
+}
+
+func colorBuilderFunc(cs *ColorString, colorCode string, msg string) *ColorString {
+	cs.initCheck()
+	cs.value.WriteString(ResetCode + colorCode + msg + ResetCode)
 	return cs
 }
 
 // Returns the completed string from a color string instance
 func (cs *ColorString) String() string {
+	cs.initCheck()
 	return cs.value.String()
 }
 
 // Reset the ansi color of the given message
 func (cs *ColorString) Reset(msg string) *ColorString {
-	cs.value.WriteString(ResetCode + msg + ResetCode)
-	return cs
+	return colorBuilderFunc(cs, ResetCode, msg)
 }
 
-// Wrap the inptu msg into the ANSI red
-func (cs *ColorString) Red(msg string) *ColorString {
-	cs.value.WriteString(ResetCode + msg + RedCode + ResetCode)
-	return cs
-}
-
-// Wrap the inptu msg into the ANSI green
-func (cs *ColorString) Green(msg string) *ColorString {
-	cs.value.WriteString(ResetCode + msg + GreenCode + ResetCode)
-	return cs
-}
-
-// Wrap the inptu msg into the ANSI yellow
-func (cs *ColorString) Yellow(msg string) *ColorString {
-	cs.value.WriteString(ResetCode + msg + YellowCode + ResetCode)
-	return cs
-}
-
-// Wrap the inptu msg into the ANSI blue
+// Wrap the input msg into the ANSI blue
 func (cs *ColorString) Blue(msg string) *ColorString {
-	cs.value.WriteString(ResetCode + msg + BlueCode + ResetCode)
-	return cs
+	return colorBuilderFunc(cs, BlueCode, msg)
 }
 
-// Wrap the inptu msg into the ANSI purple
+// Wrap the input msg into the ANSI red
+func (cs *ColorString) Red(msg string) *ColorString {
+	return colorBuilderFunc(cs, RedCode, msg)
+}
+
+// Wrap the input msg into the ANSI green
+func (cs *ColorString) Green(msg string) *ColorString {
+	return colorBuilderFunc(cs, GreenCode, msg)
+}
+
+// Wrap the input msg into the ANSI yellow
+func (cs *ColorString) Yellow(msg string) *ColorString {
+	return colorBuilderFunc(cs, YellowCode, msg)
+}
+
+// Wrap the input msg into the ANSI purple
 func (cs *ColorString) Purple(msg string) *ColorString {
-	cs.value.WriteString(ResetCode + msg + PurpleCode + ResetCode)
-	return cs
+	return colorBuilderFunc(cs, PurpleCode, msg)
 }
 
-// Wrap the inptu msg into the ANSI cyan
+// Wrap the input msg into the ANSI cyan
 func (cs *ColorString) Cyan(msg string) *ColorString {
-	cs.value.WriteString(ResetCode + msg + CyanCode + ResetCode)
-	return cs
+	return colorBuilderFunc(cs, CyanCode, msg)
 }
 
-// Wrap the inptu msg into the ANSI gray
+// Wrap the input msg into the ANSI gray
 func (cs *ColorString) Gray(msg string) *ColorString {
-	cs.value.WriteString(ResetCode + msg + GrayCode + ResetCode)
-	return cs
+	return colorBuilderFunc(cs, GrayCode, msg)
 }
 
-// Wrap the inptu msg into the ANSI white
+// Wrap the input msg into the ANSI white
 func (cs *ColorString) White(msg string) *ColorString {
-	cs.value.WriteString(ResetCode + msg + WhiteCode + ResetCode)
-	return cs
+	return colorBuilderFunc(cs, WhiteCode, msg)
 }
