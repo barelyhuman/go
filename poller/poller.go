@@ -27,7 +27,6 @@ type Poller struct {
 	filesToIgnore []string
 	Events        chan PollerEvent
 	evntHandlers  []EventHandler
-	errHandlers   []ErrorHandler
 	Errors        chan PollerError
 	quit          chan struct{}
 }
@@ -59,8 +58,9 @@ func (pw *Poller) IgnorePath(path string) {
 }
 
 func (pw *Poller) isIgnored(path string) bool {
+	cleanPath := filepath.Clean(path)
 	for _, p := range pw.filesToIgnore {
-		if strings.HasPrefix(path, p) || path == p {
+		if strings.HasPrefix(cleanPath, p) || cleanPath == p {
 			return true
 		}
 	}
