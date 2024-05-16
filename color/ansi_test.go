@@ -28,3 +28,12 @@ func TestColorBuilder(t *testing.T) {
 		t.Fail()
 	}
 }
+
+func TestDim(t *testing.T) {
+	cs := color.ColorString{}
+	cs.Dim("Hello")
+	val := cs.String()
+	if val != color.ResetCode+color.DimCode+"Hello"+color.ResetCode {
+		t.Fail()
+	}
+}

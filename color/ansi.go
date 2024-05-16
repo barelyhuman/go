@@ -14,6 +14,7 @@ var PurpleCode = "\033[35m"
 var CyanCode = "\033[36m"
 var GrayCode = "\033[37m"
 var WhiteCode = "\033[97m"
+var DimCode = "\033[2m"
 
 type ColorString struct {
 	value *strings.Builder
@@ -30,6 +31,7 @@ func init() {
 		CyanCode = ""
 		GrayCode = ""
 		WhiteCode = ""
+		DimCode = ""
 	}
 
 }
@@ -56,7 +58,7 @@ func colorBuilderFunc(cs *ColorString, colorCode string, msg string) *ColorStrin
 // Returns the completed string from a color string instance
 func (cs *ColorString) String() string {
 	cs.initCheck()
-	return cs.value.String()
+	return strings.ReplaceAll(cs.value.String(), ResetCode+ResetCode, ResetCode)
 }
 
 // Reset the ansi color of the given message
@@ -102,4 +104,8 @@ func (cs *ColorString) Gray(msg string) *ColorString {
 // Wrap the input msg into the ANSI white
 func (cs *ColorString) White(msg string) *ColorString {
 	return colorBuilderFunc(cs, WhiteCode, msg)
+}
+
+func (cs *ColorString) Dim(msg string) *ColorString {
+	return colorBuilderFunc(cs, DimCode, msg)
 }
